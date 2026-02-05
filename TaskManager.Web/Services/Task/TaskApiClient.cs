@@ -162,5 +162,45 @@ namespace TaskManager.Web.Services
                         : string.Empty);
         }
 
+
+        //retorna lista de registros 
+        public async Task<PagedResultViewModel<TaskViewModel>> AdvancedSearchAsync(TaskSearchViewModel filters)
+        {
+            var query = new Dictionary<string, string>();
+
+            if (!string.IsNullOrWhiteSpace(filters.Text))
+                query["text"] = filters.Text;
+
+            if (!string.IsNullOrWhiteSpace(filters.CategoryName))
+                query["categoryName"] = filters.CategoryName;
+
+            if (filters.CategoryId.HasValue)
+                query["categoryId"] = filters.CategoryId.Value.ToString();//.tostring se envian los valores en un string y viajan en un query
+
+            if (filters.Step.HasValue)
+                query["step"] = filters.Step.Value.ToString();
+
+            if (filters.IsCompleted.HasValue)
+                query["isCompleted"] = filters.IsCompleted.Value.ToString().ToLower();
+
+            query["page"] = filters.Page.ToString();
+            query["pageSize"] = filters.PageSize.ToString();//tamaño de la pagina
+
+            // Construir una URL con QueryString dinámico
+            var queryString = string.Join("&",
+                query.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+
+            var url = $"/api/tasks/advanced-search?{queryString}";
+
+            return await _httpClient.GetFromJsonAsync<PagedResultViewModel<TaskViewModel>>(url)
+                   ?? new PagedResultViewModel<TaskViewModel>// ?? <-- operador de coalescencia nula 
+                   {
+                       Items = new List<TaskViewModel>(),
+                       Page = filters.Page,
+                       PageSize = filters.PageSize,
+                       TotalCount = 0
+                   };
+        }
+
     }
 }
