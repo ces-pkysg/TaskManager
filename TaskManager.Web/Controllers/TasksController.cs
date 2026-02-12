@@ -160,6 +160,15 @@ namespace TaskManager.Web.Controllers
         }
 
 
+        //Partial View
+        [HttpGet]
+        public async Task<IActionResult> LoadTablePartial(TaskSearchViewModel filters)
+        {
+            var result = await _client.AdvancedSearchAsync(filters);
+            return PartialView("_TaskTablePartial", result.Items);
+        }
+
+
         //crear un view model
     }
 }
