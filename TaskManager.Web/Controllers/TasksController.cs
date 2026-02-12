@@ -151,6 +151,15 @@ namespace TaskManager.Web.Controllers
             return View(filters); // regresamos siempre el modelo completo
         }
 
+
+        //5/feb
+        [HttpGet]
+        public IActionResult AjaxDemo()
+        {
+            return View();
+        }
+
+
         //crear un view model
     }
 }
