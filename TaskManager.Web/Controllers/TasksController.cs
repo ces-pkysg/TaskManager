@@ -65,6 +65,7 @@ namespace TaskManager.Web.Controllers
             if (!ModelState.IsValid)
                 return View(model);
 
+            //ya no es necesario el try catch porque el middleware captura la excepcion (en controlador y servicio quitar los trycatch)
             try
             {
                 await _client.UpdateTaskAsync(model);
