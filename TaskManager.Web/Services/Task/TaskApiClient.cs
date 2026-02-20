@@ -91,6 +91,30 @@ namespace TaskManager.Web.Services
             };
         }
 
+        //duplicado editar tareas
+        //public async Task<EditTaskViewModel> GetTaskById2Async(int id)
+        //{
+          //  var response = await _httpClient.GetFromJsonAsync<TaskViewModel>($"/api/tasks/{id}");
+
+            //var model = new UpdateTaskViewModel
+            //{
+             //   Id = task.Id,
+               // Title = task.Title,
+                //CategoryId = task.CategoryId,
+                //Step = task.Step,
+                //IsCompleted = task.IsCompleted
+            //};
+
+            //return new EditTaskViewModel
+            //{
+              //  Id = response.Id,
+                //Title = response.Title,
+                //CategoryId = response.CategoryId,
+                //Step = response.Step,
+                //IsCompleted = response.IsCompleted
+            //};
+        //}
+
         public async Task UpdateTaskAsync(EditTaskViewModel model)
         {
             var response = await _httpClient.PutAsJsonAsync(

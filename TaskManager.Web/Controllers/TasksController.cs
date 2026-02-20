@@ -60,7 +60,7 @@ namespace TaskManager.Web.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(EditTaskViewModel model)
+        public async Task<IActionResult> Edit([FromBody]EditTaskViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
@@ -167,6 +167,22 @@ namespace TaskManager.Web.Controllers
         {
             var result = await _client.AdvancedSearchAsync(filters);
             return PartialView("_TaskTablePartial", result.Items);
+        }
+
+
+
+        [HttpGet]
+        public IActionResult CreatePartial()
+        {
+            return PartialView("_TaskFormPartial", new CreateTaskViewModel());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> EditPartial(int id)
+        {
+            var task = await _client.GetTaskByIdAsync(id);
+
+            return PartialView("_TaskFormPartial", task);
         }
 
 

@@ -1,0 +1,32 @@
+﻿@model dynamic
+
+<div class="modal-header">
+    <h5 class="modal-title">
+        @(Model.Id == 0 ? "Crear tarea" : "Editar tarea")<!--si el viewmodel que le regres tiene id es editar sino es crear-->
+    </h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+</div>
+
+<div class="modal-body">
+    <form id="taskForm">
+        <input type="hidden" name="Id" value="@Model.Id" /><!--se colocan propiedades del model (id oculto, titulo y setea valor en modelo)-->
+
+        <div class="mb-3">
+            <label>Título</label>
+            <input name="Title" value="@Model.Title" class="form-control" />
+            <span class="text-danger" data-valmsg-for="Title"></span>
+        </div>
+
+        <div class="mb-3">
+            <label>Step</label>
+            <input name="Step" value="@Model.Step" type="number" class="form-control" />
+            <span class="text-danger" data-valmsg-for="Step"></span>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button id="btnSaveTask" class="btn btn-primary">
+        Guardar
+    </button>
+</div>
