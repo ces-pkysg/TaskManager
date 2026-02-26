@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskManager.Web.Models;
 using TaskManager.Web.Services;
+using TaskManager.Web.Utilities.Exceptions;
 
 namespace TaskManager.Web.Controllers
 {
@@ -205,6 +206,42 @@ namespace TaskManager.Web.Controllers
             };
 
             return PartialView("_TaskFormPartial", model);
+        }
+
+
+
+        //duda con este metodo 
+        [HttpPost]
+        public async Task<IActionResult> DeleteAjax(int id)
+        {
+            try
+            {
+                await _client.DeleteTaskAsync(id);
+
+                return Ok(new
+                {
+                    success = true, //dice si la peticion estuvo bien 
+                    message = "La tarea se eliminó correctamente."
+                });
+            }
+            catch (ApiException ex)
+            {
+                // Error controlado que viene de la API (404, 400, reglas de negocio…)
+                return BadRequest(new
+                {
+                    success = false,
+                    message = ex.Message
+                });
+            }
+            catch (Exception)
+            {
+                // Error inesperado (problema de red, bug, etc.)
+                return StatusCode(500, new
+                {
+                    success = false,
+                    message = "Ocurrió un error inesperado al eliminar la tarea."
+                });
+            }
         }
 
 

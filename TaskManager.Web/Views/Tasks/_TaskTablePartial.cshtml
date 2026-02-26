@@ -27,10 +27,17 @@
                             Editar
                         </button>
 
-                        <form asp-action="Delete" method="post" class="d-inline">
+                        
+                        <button class="btn btn-sm btn-danger btnDelete"
+                                data-id="@t.Id"> <!--Almacena o setea una propiedad dentro de este elemento Id-->
+                            Eliminar
+                        </button>
+                        
+                        
+                        <!--<form asp-action="Delete" method="post" class="d-inline">
                             <input type="hidden" name="id" value="@t.Id" />
                             <button class="btn btn-sm btn-danger">Eliminar</button>
-                        </form>
+                        </form>-->
                     </td>
                 </tr>
             }
