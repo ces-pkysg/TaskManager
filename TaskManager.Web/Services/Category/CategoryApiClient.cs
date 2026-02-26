@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -17,6 +18,7 @@ namespace TaskManager.Web.Services
             var baseUrl = configuration["ApiSettings:BaseUrl"];
             _httpClient.BaseAddress = new Uri(baseUrl);
         }
+
 
         public async Task<string> ImportCategoriesFromExcelAsync(IFormFile file)//recibimos archivos como parametro
         {
@@ -57,6 +59,11 @@ namespace TaskManager.Web.Services
                    (result.Duplicadas > 0
                         ? $" ({result.Duplicadas} filas duplicadas no se importaron.)"
                         : string.Empty);
+        }
+
+        Task<IActionResult> ICategoryApiClient.GetCategoriesAsync()
+        {
+            throw new NotImplementedException();
         }
     }
 }

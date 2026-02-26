@@ -42,14 +42,14 @@ namespace TaskManager.Web.Controllers
 
         //entra por el post para que se muestre el formulario
         [HttpPost]
-        public async Task<IActionResult> Create(CreateTaskViewModel model)
+        public async Task<IActionResult> Create([FromBody]CreateTaskViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+                return BadRequest(ModelState);
 
             await _client.CreateTaskAsync(model);
 
-            return RedirectToAction(nameof(Index));
+            return Ok();
         }
 
         [HttpGet]
@@ -59,24 +59,18 @@ namespace TaskManager.Web.Controllers
             return View(model);
         }
 
+
+
         [HttpPost]
         public async Task<IActionResult> Edit([FromBody]EditTaskViewModel model)
         {
             if (!ModelState.IsValid)
-                return View(model);
+                return BadRequest(ModelState);
 
-            //ya no es necesario el try catch porque el middleware captura la excepcion (en controlador y servicio quitar los trycatch)
-            try
-            {
-                await _client.UpdateTaskAsync(model);
-                TempData["Success"] = "La tarea fue actualizada correctamente.";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                ModelState.AddModelError("", "Ocurrió un error: " + ex.Message);
-                return View(model);
-            }
+            await _client.UpdateTaskAsync(model);
+
+            return Ok();
+          
         }
 
 
@@ -171,18 +165,46 @@ namespace TaskManager.Web.Controllers
 
 
 
+        
+
         [HttpGet]
         public IActionResult CreatePartial()
         {
-            return PartialView("_TaskFormPartial", new CreateTaskViewModel());
+            var model = new TaskFormViewModel
+            {
+                Id = 0,              // crear
+                Title = string.Empty,
+                CategoryId = 0,
+                Step = 1,
+                IsCompleted = false
+            };
+
+            return PartialView("_TaskFormPartial", model);
         }
+
+
 
         [HttpGet]
         public async Task<IActionResult> EditPartial(int id)
         {
             var task = await _client.GetTaskByIdAsync(id);
 
-            return PartialView("_TaskFormPartial", task);
+            if (task == null)
+            {
+                // puedes decidir qué hacer aquí (redirigir, mensaje, etc.)
+                return NotFound();
+            }
+
+            var model = new TaskFormViewModel
+            {
+                Id = task.Id,
+                Title = task.Title,
+                CategoryId = task.CategoryId,
+                Step = task.Step,
+                IsCompleted = task.IsCompleted
+            };
+
+            return PartialView("_TaskFormPartial", model);
         }
 
 

@@ -11,5 +11,7 @@
         public int? CategoryId { get; set; } //FK y campo de categorias ?(nullable)
         public Category? Category { get; set; } //esta linea hace que el campo apunte a una tabla
         public bool IsDeleted { get; set; } = false;
+
+
     }
 }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.Office2021.DocumentTasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Context;
 using TaskManager.Models;
@@ -197,12 +198,17 @@ public class TaskService : ITaskService
         var task = await _context.Tasks.FindAsync(id);
         if (task == null) return false;
 
-        task.Title = request.Title.Trim();
-        task.Step = request.Step; 
-        task.CategoryId = request.CategoryId;
+        if (!string.IsNullOrWhiteSpace(request.Title))
+            task.Title = request.Title.Trim();
 
-        if (request.IsComplete.HasValue)
-            task.IsComplete = request.IsComplete.Value;
+        if (request.Step.HasValue)
+            task.Step = request.Step.Value;
+
+        if (request.CategoryId.HasValue)
+            task.CategoryId = request.CategoryId.Value;
+
+        if (request.IsCompleted.HasValue)
+            task.IsComplete = request.IsCompleted.Value;
 
         await _context.SaveChangesAsync();
         return true;
