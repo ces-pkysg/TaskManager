@@ -1,8 +1,15 @@
-﻿@model TaskManager.Web.Models.PagedResultViewModel<TaskManager.Web.Models.TaskViewModel>
+﻿index
+
+@model TaskManager.Web.Models.PagedResultViewModel<TaskManager.Web.Models.TaskViewModel>
 
 
 @{
     ViewData["Title"] = "Tareas";
+    <!-- Guardamos filtros que vienen en la URL-->
+    var text = Context.Request.Query["Text"].ToString();
+    var categoryName = Context.Request.Query["CategoryName"].ToString();
+    var isCompleted = Context.Request.Query["IsCompleted"].ToString();
+    var step = Context.Request.Query["Step"].ToString();
 }
 
 
@@ -10,38 +17,39 @@
 <partial name="_AlertMessages" />
 
 
-<h1>Tareas 
+<h1>
+    Tareas
     <!--<a asp-action="Create" class="btn btn-sm btn-primary">Agregar</a> -->
 </h1>
 
 
 <!-- FORMULARIO DE BÚSQUEDA -->
 
-<form asp-action="Search" method="get" class="mb-4">
+<form id="filterForm" asp-action="Index" method="get" class="mb-4">
 
     <div class="row">
         <div class="col-3">
             <label>Texto</label>
-            <input type="text" class="form-control" name="Text" value="Text" /> <!--Se quita @Model? . Text para que solo quede value="Text"-->
+            <input type="text" class="form-control" name="Text" value="@Context.Request.Query["Text"]" /> <!--Se quita atModel? . Text para que solo quede value="Text"-->
         </div>
 
         <div class="col-3">
             <label>Categoría</label>
-            <input type="text" class="form-control" name="CategoryName" value="CategoryName" /> <!--Igual que en text value se quita el model-->
+            <input type="text" class="form-control" name="CategoryName" value="@Context.Request.Query["CategoryName"]" /> <!--Igual que en text value se quita el model-->
         </div>
 
         <div class="col-2">
             <label>Completado</label>
             <select name="IsCompleted" class="form-control">
                 <option value="">--Todos--</option>
-                <option value="true" selected="IsCompleted == true)">Sí</option> <!--Tambien se quita el model en is completed-->
-                <option value="false" selected=".IsCompleted == false)">No</option>
+                <option value="true" selected="@(Context.Request.Query["IsCompleted"] == "true")">Sí</option> <!--Tambien se quita el model en is completed-->
+                <option value="false" selected="@(Context.Request.Query["IsCompleted"] == "false")">No</option>
             </select>
         </div>
 
         <div class="col-2">
             <label>Step</label>
-            <input type="number" class="form-control" name="Step" value="Step" /> <!--tambien se quita el model en value = Step-->
+            <input type="number" class="form-control" name="Step" value="@Context.Request.Query["Step"]" /> <!--tambien se quita el model en value = Step-->
         </div>
 
         <div class="col-2 d-flex align-items-end">
@@ -82,12 +90,13 @@
                 <td>@(t.IsCompleted ? "Sí" : "No")</td>
                 <td>@t.Step</td>
                 <td>
-                             
-                <!--se envia dato como de un formulario-->
-                                           
+
+                    <!--se envia dato como de un formulario-->
+
                     <a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id" class="btn btn-sm btn-primary">Ver detalles</a><!--Boton detalles-->
                     <a asp-action="Edit" asp-route-id="@t.Id" class="btn btn-sm btn-primary">Editar</a><!--boton de editar-->
-                    <form asp-action="Delete" method="post" class="d-inline"> <!--boton de eliminar-->
+                    <form asp-action="Delete" method="post" class="d-inline">
+                        <!--boton de eliminar-->
                         <input type="hidden" name="id" value="@t.Id" />
                         <button type="submit" class="btn btn-danger btn-sm"
                                 onclick="return confirm('¿Estás seguro de que deseas eliminar esta tarea?');">
@@ -104,7 +113,6 @@
 
 
 <!-- PAGINACIÓN -->
-
 @*Calcula cuántas páginas existen en total*@
 @{
     var totalPages = (int)Math.Ceiling((double)Model.TotalCount / Model.PageSize);
@@ -116,21 +124,29 @@
         <li class="page-item @(Model.Page <= 1 ? "disabled" : "")">
             <a class="page-link"
                asp-action="Index"
-               asp-route-page="@(Model.Page - 1)">
+               asp-route-page="@(Model.Page - 1)"
+               asp-route-text="@text"
+               asp-route-categoryName="@categoryName"
+               asp-route-isCompleted="@isCompleted"
+               asp-route-step="@step">
                 Anterior
             </a>
         </li>
 
         <li class="page-item disabled">
-            <span class="page-link">
-                Página @Model.Page de @totalPages
+            <span class="page-link"
+                  Página @Model.Page de @totalPages
             </span>
         </li>
 
         <li class="page-item @(Model.Page >= totalPages ? "disabled" : "")">
             <a class="page-link"
                asp-action="Index"
-               asp-route-page="@(Model.Page + 1)">
+               asp-route-page="@(Model.Page + 1)"
+               asp-route-text="@text"
+               asp-route-categoryName="@categoryName"
+               asp-route-isCompleted="@isCompleted"
+               asp-route-step="@step">
                 Siguiente
             </a>
         </li>
@@ -142,6 +158,4 @@
 
 
 
-
 <!--Index2-->
-

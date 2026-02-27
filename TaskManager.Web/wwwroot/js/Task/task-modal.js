@@ -46,12 +46,14 @@
             //const formData = new FormData(form);
             //const data = Object.fromEntries(formData.entries());
             const data = {
-                Id: form.querySelector("[name='Id']").value,
+                Id: parseInt(form.querySelector("[name='Id']").value) || 0,
                 Title: form.querySelector("[name='Title']").value,
-                CategoryId: form.querySelector("[name='CategoryId']").value,
-                Step: form.querySelector("[name='Step']").value,
+                CategoryId: parseInt(form.querySelector("[name='CategoryId']").value) || 0,
+                Step: parseInt (form.querySelector("[name='Step']").value) || 0,
                 IsCompleted: form.querySelector("[name='IsCompleted']").checked
             };
+
+            console.log("Datos enviados al Controller: ", data);//revisa consola del navegador
 
             const isEdit = data.Id && data.Id !== "0";
 

@@ -1,8 +1,8 @@
 ﻿document.addEventListener("DOMContentLoaded", async () => {
 
-    const btnBuscar = document.getElementById("btnBuscarAjax");
-    const contenedor = document.getElementById("taskTableContainer");
-    const formulario = document.getElementById("filterForm");
+    const btnBuscar = document.getElementById("btnBuscarAjax");//boton buscar Ajax
+    const contenedor = document.getElementById("taskTableContainer");//donde está la tabla
+    const formulario = document.getElementById("filterForm");//formulario de filtros
     let url = "";
 
     btnBuscar.addEventListener("click", async () => {

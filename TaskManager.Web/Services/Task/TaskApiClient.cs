@@ -62,7 +62,7 @@ namespace TaskManager.Web.Services
         public async Task CreateTaskAsync(CreateTaskViewModel model)
         {
             var response = await _httpClient.PostAsJsonAsync(
-                "/api/tasks",
+                "api/tasks", //"/api/tasks"
                 model
             );
 

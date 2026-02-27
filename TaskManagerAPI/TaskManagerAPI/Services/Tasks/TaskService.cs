@@ -253,21 +253,28 @@ public class TaskService : ITaskService
         {
             Title = request.Title.Trim(),
             IsCompleted = request.IsCompleted,
-            CategoryId = request.CategoryId
+            CategoryId = request.CategoryId,
+            Step = request.Step 
         };
 
         //Insertar en Base de Datos (Entity Framework marca el objeto como Added.)
         _context.Tasks.Add(entity);
-        //Aquí EF ejecuta SQL:
+        //Guarda en la base de datos (Aquí EF ejecuta SQL:)
         await _context.SaveChangesAsync();
 
         //Construccion de respuesta
         //Se devuelve un DTO, ¡¡¡ NO SE DEVUELVE LA ENTIDAD COMPLETA !!!
+        //Se mapea o se pasa los datos de la entidad al DTO de respuesta
         return new TaskItemResponse
         {
+            //En la respuesta pon el Id que SQL acaba de generar automaticamente
             Id = entity.Id,
+            //Pon el titulo que acabamos de generar
             Title = entity.Title,
-            IsCompleted = entity.IsCompleted
+            //pon si esta completada
+            IsCompleted = entity.IsCompleted,
+            //pon el step que guardamos
+            Step = entity.Step 
         };
     }
 

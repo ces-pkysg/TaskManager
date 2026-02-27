@@ -14,11 +14,27 @@ namespace TaskManager.Web.Controllers
             _client = client;
         }
 
-        public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
+
+        //Metodo Index
+        [HttpGet]
+        public async Task <IActionResult>Index(TaskSearchViewModel filters)
         {
-            var result = await _client.GetTasksAsync(page, pageSize);
+            if (filters.Page == 0)
+                filters.Page = 1;
+
+            if (filters.PageSize == 0)
+                filters.PageSize = 5;
+
+            var result = await _client.AdvancedSearchAsync(filters);
+
             return View(result);
         }
+
+        //public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
+        //{
+            //var result = await _client.GetTasksAsync(page, pageSize);
+            //return View(result);
+        //}
 
 
         //metodo search

@@ -12,5 +12,7 @@ namespace TaskManagerAPI.DTOs.TaskItemDTOs
         [Required(ErrorMessage = "CategoryId es requerido.")]
         public int CategoryId { get; set; }
 
+        public int Step { get; set; }
+
     }
 }
