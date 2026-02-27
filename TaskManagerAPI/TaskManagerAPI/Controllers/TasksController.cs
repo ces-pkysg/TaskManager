@@ -12,6 +12,8 @@ using TaskManagerAPI.Utilities.Exceptions;
 using static System.Net.Mime.MediaTypeNames;
 using System.Threading.Tasks;
 
+
+//Este archivo recibe las peticiones de HTTP
 namespace TaskManagerAPI.Controllers
 {
     [Route("api/[controller]")]
@@ -76,9 +78,13 @@ namespace TaskManagerAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskItemResponse>> Create([FromBody] CreateTaskRequest request)
         {
+            //Llamada al service EL CONTROLLER NO MANEJA BASE DE DATOS, SOLO LLAMA AL SERVICE
             var result = await _taskService.CreateAsync(request);
 
+            //Respuesta HTTP
+            //Devuelve HTTP 201 Created y Ubicacion del recurso PJ Location: /api/tasks/10
             return CreatedAtAction(nameof(GetById), new { id = result.Id }, result);
+
             /*if (request == null)
                 return BadRequest("Body requerido.");
 
@@ -363,7 +369,7 @@ namespace TaskManagerAPI.Controllers
                         var task = new TaskItem
                         {
                             Title = title.Trim(),
-                            IsComplete = isComplete,
+                            IsCompleted = isComplete,
                             Step = step,
                             CategoryId = categoryId,
                             IsDeleted = isDeleted,
