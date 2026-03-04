@@ -17,7 +17,7 @@ namespace TaskManager.Web.Controllers
 
         //Metodo Index
         [HttpGet]
-        public async Task <IActionResult>Index(TaskSearchViewModel filters)
+        public async Task <IActionResult>Search(TaskSearchViewModel filters)//Se cambió a Search para que no sea la principal
         {
             if (filters.Page == 0)
                 filters.Page = 1;
@@ -27,7 +27,7 @@ namespace TaskManager.Web.Controllers
 
             var result = await _client.AdvancedSearchAsync(filters);
 
-            return View(result);
+            return View("Index",result);
         }
 
         //public async Task<IActionResult> Index(int page = 1, int pageSize = 5)
@@ -38,7 +38,7 @@ namespace TaskManager.Web.Controllers
 
 
         //metodo search
-        public async Task<IActionResult> Search(TaskSearchViewModel model)
+        public async Task<IActionResult> Index(TaskSearchViewModel model)//Se cambió a Index para que sea la principal
         {
             // Si es la primera carga de la página
             if (model.Page == 0)
@@ -172,12 +172,20 @@ namespace TaskManager.Web.Controllers
         }
 
 
-        //Partial View
+        //Partial View 
         [HttpGet]
         public async Task<IActionResult> LoadTablePartial(TaskSearchViewModel filters)
         {
+            if (filters.Page == 0)
+                filters.Page = 1;
+
+            if (filters.PageSize == 0)
+                filters.PageSize = 5;
+
             var result = await _client.AdvancedSearchAsync(filters);
-            return PartialView("_TaskTablePartial", result.Items);
+            filters.Result = result;
+
+            return PartialView("_TaskTablePartial", filters);//.Items);//regresa result.Items no tiene info de paginacion
         }
 
 
