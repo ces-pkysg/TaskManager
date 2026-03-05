@@ -66,7 +66,7 @@ namespace TaskManager.Web.Controllers
             // El middleware global ya maneja las excepciones si _categoryApiClient falla
             var categories = await _categoryApiClient.GetCategoriesAsync();
 
-            // Devolvemos la lista directamente como JSON
+            // Devolvemos la lista 
             return await _categoryApiClient.GetCategoriesAsync();
         }
 

@@ -174,20 +174,21 @@ async function loadCategoriesInModal(modalContent) {
     if (!select) return;
 
     // Valor actual (cuando edito)
-    const selectedId = select.dataset.selectedCategoryId || "";
+    const selectedId = select.getAttribute("data-selected-category-id");
+    console.log("ID recuperado para preselección:", selectedId); // Para revisar en F12
 
     try {
         // Antes: const response = await fetch("https://127.0.0.1:7074/api/Categories");
 
         // Ahora :Llama a CategoriesController.cs
         const response = await fetch("/Categories/GetCategories");
+        const categories = await response.json();
 
         if (!response.ok) {
             console.error("Error al cargar categorías");
             return;
         }
 
-        const categories = await response.json();
 
         // Limpiamos las opciones actuales excepto la primera
         const firstOption = select.querySelector("option[value='']");
@@ -201,18 +202,37 @@ async function loadCategoriesInModal(modalContent) {
             select.appendChild(defaultOpt);
         }
 
-        // Agregamos las categorías
+        // Agregamos las categorías dinamicamente
         categories.forEach(cat => {
             const opt = document.createElement("option");
             opt.value = cat.id;
             opt.textContent = cat.name;
 
-            if (selectedId && selectedId === String(cat.id)) {
+
+            // Agregado: Comparación forzada como String para evitar fallos de tipos
+            if (selectedId && String(selectedId) === String(cat.id)) {
                 opt.selected = true;
+
+                // Opcional: Tambien se puede usar el atributo:
+                opt.setAttribute("selected","selected");
             }
 
             select.appendChild(opt);
         });
+
+        //Prueba
+        setTimeout(() => {
+            if (selectedId && selectedId !== "0") {
+                select.value = selectedId;
+            }
+        }, 100);
+
+
+
+        // Agregado: Refuerzo manual. Forza al select a marcar el valor después de cargar el DOM
+        //if (selectedId) {
+        //    select.value = selectedId;
+        //}
 
     } catch (err) {
         console.error("Error de red al cargar categorías", err);

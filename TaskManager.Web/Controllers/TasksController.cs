@@ -213,12 +213,16 @@ namespace TaskManager.Web.Controllers
         public async Task<IActionResult> EditPartial(int id)
         {
             var task = await _client.GetTaskByIdAsync(id);
-
+                    
             if (task == null)
             {
                 // puedes decidir qué hacer aquí (redirigir, mensaje, etc.)
                 return NotFound();
             }
+
+
+            System.Diagnostics.Debug.WriteLine($"DEBUG: Titulo={task.Title}, Step={task.Step}, Cat={task.CategoryId}");
+
 
             var model = new TaskFormViewModel
             {

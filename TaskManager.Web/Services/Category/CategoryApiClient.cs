@@ -66,6 +66,7 @@ namespace TaskManager.Web.Services
         //    throw new NotImplementedException();
         //}
 
+        //Carga lista categorias
         public async Task<IActionResult> GetCategoriesAsync()
         {
             // Hacemos la petición GET a la API externa

@@ -292,7 +292,9 @@ public class TaskService : ITaskService
         {
             Id = task.Id,
             Title = task.Title,
-            IsCompleted = task.IsCompleted
+            IsCompleted = task.IsCompleted,
+            Step = task.Step,
+            CategoryId = task.CategoryId
         };
     }
 
