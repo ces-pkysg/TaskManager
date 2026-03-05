@@ -177,7 +177,10 @@ async function loadCategoriesInModal(modalContent) {
     const selectedId = select.dataset.selectedCategoryId || "";
 
     try {
-        const response = await fetch("https://127.0.0.1:7074/api/Categories");
+        // Antes: const response = await fetch("https://127.0.0.1:7074/api/Categories");
+
+        // Ahora :Llama a CategoriesController.cs
+        const response = await fetch("/Categories/GetCategories");
 
         if (!response.ok) {
             console.error("Error al cargar categorías");

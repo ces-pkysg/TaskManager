@@ -61,9 +61,29 @@ namespace TaskManager.Web.Services
                         : string.Empty);
         }
 
-        Task<IActionResult> ICategoryApiClient.GetCategoriesAsync()
+        //Task<IActionResult> ICategoryApiClient.GetCategoriesAsync()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        public async Task<IActionResult> GetCategoriesAsync()
         {
-            throw new NotImplementedException();
+            // Hacemos la petición GET a la API externa
+            var response = await _httpClient.GetAsync("/api/categories");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Leemos el contenido como una lista de objetos (puedes usar dynamic o una clase)
+                var categories = await response.Content.ReadFromJsonAsync<List<object>>();
+
+                // Devolvemos un OkObjectResult (que es un IActionResult) con la lista
+                return new OkObjectResult(categories);
+            }
+
+            // Si algo falla, devolvemos el error que venga de la API
+            return new StatusCodeResult((int)response.StatusCode);
         }
+
+
     }
 }

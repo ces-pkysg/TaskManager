@@ -50,13 +50,25 @@ namespace TaskManager.Web.Controllers
 
 
         //Modal edit
+        //[HttpGet]
+        //public async Task<IActionResult> GetCategories()
+        //{
+        //   var model = await _categoryApiClient.GetCategoriesAsync();
+        // return model;
+        //}
+
+
+
+        //Modal edit
         [HttpGet]
         public async Task<IActionResult> GetCategories()
         {
-           var model = await _categoryApiClient.GetCategoriesAsync();
-         return model;
-        }
+            // El middleware global ya maneja las excepciones si _categoryApiClient falla
+            var categories = await _categoryApiClient.GetCategoriesAsync();
 
+            // Devolvemos la lista directamente como JSON
+            return await _categoryApiClient.GetCategoriesAsync();
+        }
 
 
     }

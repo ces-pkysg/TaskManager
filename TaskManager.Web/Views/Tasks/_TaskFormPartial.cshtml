@@ -21,7 +21,13 @@
 
         <div class="mb-3">
             <label class="form-label">Categoría</label>
-            <input name="CategoryId" value="@Model.CategoryId" type="number" class="form-control" />
+            <select id="categorySelect"
+                    name="CategoryId"
+                    class="form-select"
+                    data-selected-category-id="@Model.CategoryId">
+                    <option value="">Seleccione una categoría</option>
+            </select>
+            <!--<input name="CategoryId" value="@Model.CategoryId" type="number" class="form-control" />-->
             <span class="text-danger" data-valmsg-for="CategoryId"></span>
         </div>
 
