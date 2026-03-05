@@ -6,35 +6,53 @@
     const modalContent = document.getElementById("taskModalContent");
     const contenedor = document.getElementById("taskTableContainer");//donde está la tabla
 
-
+    //boton buscar va a llamar a la funcion inificada
     btnBuscar.addEventListener("click", async () => {
+        //Al buscar manualmente hace que inicie en la pagina 1
+        await fetchFilteredTask(1);
 
-        // Convertimos el formulario en QueryString automático
-        const formData = new FormData(formulario);
-        const query = new URLSearchParams();
 
-        formData.forEach((value, key) => {
-            if (value !== null && value !== "") {
-                query.append(key, value);
-            }
-        });
+        //// Convertimos el formulario en QueryString automático
+        //const formData = new FormData(formulario);
+        //const query = new URLSearchParams();
 
-        // Construimos la URL para el GET parcial
-        let url = '/Tasks/LoadTablePartial?' + query.toString();
+        //formData.forEach((value, key) => {
+        //    if (value !== null && value !== "") {
+        //        query.append(key, value);
+        //    }
+        //});
 
-        // Llamada AJAX
-        const response = await fetch(url);
+        //// Construimos la URL para el GET parcial
+        //let url = '/Tasks/LoadTablePartial?' + query.toString();
 
-        if (!response.ok) {
-            contenedor.innerHTML = "<p>Error al cargar resultados.</p>";
-            return;
-        }
+        //// Llamada AJAX
+        //const response = await fetch(url);
 
-        const html = await response.text();
+        //if (!response.ok) {
+        //    contenedor.innerHTML = "<p>Error al cargar resultados.</p>";
+        //    return;
+        //}
 
-        // Reemplazamos la tabla
-        contenedor.innerHTML = html;
+        //const html = await response.text();
+
+        //// Reemplazamos la tabla
+        //contenedor.innerHTML = html;
     });
+
+
+    //Nuevo listener global para los clics en los numeros de pagina
+    document.addEventListener("click", async (e) => {
+        //si el elemento clicado tiene la clase del boton de pagina
+        if (e.target.matches(".page-link-btn")) {
+            e.preventDefault();// Evita saltos de pagina o recarga
+
+            const page = e.target.dataset.page; // Obtiene el numero del atributo data-page
+            if (page) {
+                await fetchFilteredTask(page); // Llama a la busqueda manteniendo filtros
+            }
+
+        }
+});
 
     // CREAR
     document.getElementById("btnCrearTask")
@@ -86,7 +104,7 @@
                 IsCompleted: form.querySelector("[name='IsCompleted']").checked
             };
 
-            console.log("Datos enviados al Controller: ", data);//revisa consola del navegador
+            //prueba console.log("Datos enviados al Controller: ", data);//revisa consola del navegador
 
             const isEdit = data.Id && data.Id !== "0";
 
@@ -157,13 +175,66 @@ function spinnerHtml() {
         </div>`;
 }
 
-async function refreshTable() {
-    const response = await fetch("/Tasks/LoadTablePartial");
-    const html = await response.text();
-    document.getElementById("taskTableContainer").innerHTML = html;
+
+//Maneja filtros y paginacion al mismo tiempo en una sola función
+async function fetchFilteredTask(page = 1) {
+    const formulario = document.getElementById("filterForm");
+    const contenedor = document.getElementById("taskTableContainer");
+
+    if (!formulario || !contenedor) return;
+
+    // Convertimos el formulario en QueryString automático
+    const formData = new FormData(formulario);
+    const query = new URLSearchParams();
+
+    formData.forEach((value, key) => {
+        if (value !== null && value !== "") {
+            query.append(key, value);
+        }
+    });
+
+
+//Agrega la pagina a la url
+    query.append("page", page);
+
+    //Feedback visual para usuario
+    contenedor.style.opacity = "0.5";
+
+    try {
+        const url = '/Tasks/LoadTablePartial?' + query.toString();
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            contenedor.innerHTML = "<p>Error al cargar resultados.</p>";
+            return;
+        }
+
+        const html = await response.text();
+
+        //Se reemplaza tabla con contenido nuevo
+        contenedor.innerHTML = html;
+    } catch (err) {
+        console.error("Error en la petición AJAX", err);
+    } finally {
+        contenedor.style.opacity = "1";
+    }
 }
 
+//Actualiza la tabla después de crear, editar o eliminar para mostrar los cambios sin recargar toda la página
+//respetando filtros actuales
+async function refreshTable() {
+    //Encuentra la pagina activa actualmente en el HTML 
+    const activePageBtn = document.querySelector(".page-item.active .page-link-btn");
+    const currentPage = activePageBtn ? activePageBtn.dataset.page : 1;
 
+    //Llama a la función maestra con la página que ya teníamos
+    await fetchFilteredTask(currentPage);
+
+
+    //const response = await fetch("/Tasks/LoadTablePartial");
+    //const html = await response.text();
+    //document.getElementById("taskTableContainer").innerHTML = html;
+}
 
 
 
@@ -175,7 +246,7 @@ async function loadCategoriesInModal(modalContent) {
 
     // Valor actual (cuando edito)
     const selectedId = select.getAttribute("data-selected-category-id");
-    console.log("ID recuperado para preselección:", selectedId); // Para revisar en F12
+    //prueba para revisar console.log("ID recuperado para preselección:", selectedId);
 
     try {
         // Antes: const response = await fetch("https://127.0.0.1:7074/api/Categories");
@@ -220,7 +291,7 @@ async function loadCategoriesInModal(modalContent) {
             select.appendChild(opt);
         });
 
-        //Prueba
+        //Retraso de seguridad para asegurar la preseleccion
         setTimeout(() => {
             if (selectedId && selectedId !== "0") {
                 select.value = selectedId;

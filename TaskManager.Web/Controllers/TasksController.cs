@@ -221,7 +221,8 @@ namespace TaskManager.Web.Controllers
             }
 
 
-            System.Diagnostics.Debug.WriteLine($"DEBUG: Titulo={task.Title}, Step={task.Step}, Cat={task.CategoryId}");
+            // prueba 
+            //System.Diagnostics.Debug.WriteLine($"DEBUG: Titulo={task.Title}, Step={task.Step}, Cat={task.CategoryId}");
 
 
             var model = new TaskFormViewModel
