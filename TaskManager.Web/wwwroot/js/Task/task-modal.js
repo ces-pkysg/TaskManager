@@ -1,10 +1,10 @@
 ﻿document.addEventListener("DOMContentLoaded", () => {
 
-    const btnBuscar = document.getElementById("btnBuscarAjax");//boton buscar Ajax
-    const formulario = document.getElementById("filterForm");//formulario de filtros
-    const modal = new bootstrap.Modal(document.getElementById("taskModal"));
-    const modalContent = document.getElementById("taskModalContent");
-    const contenedor = document.getElementById("taskTableContainer");//donde está la tabla
+    const btnBuscar = document.getElementById("btnBuscarAjax");//boton buscar Ajax           ////REFERENCIA DOM 
+    const formulario = document.getElementById("filterForm");//formulario de filtros         ////REFERENCIA DOM Task.index.core.$formulario
+    const modal = new bootstrap.Modal(document.getElementById("taskModal"));                 ////REFERENCIA DOM 
+    const modalContent = document.getElementById("taskModalContent");                        ////REFERENCIA DOM
+    const contenedor = document.getElementById("taskTableContainer");//donde está la tabla   ////REFERECNIA DOM   
 
     //boton buscar va a llamar a la funcion inificada
     btnBuscar.addEventListener("click", async () => {
@@ -54,13 +54,13 @@
         }
 });
 
-    // CREAR
-    document.getElementById("btnCrearTask")
+    // CREAR  ORIGINAL
+    document.getElementById("btnCrearTask")//boton crear va acore.js
         .addEventListener("click", async () => {
 
             modalContent.innerHTML = spinnerHtml();
 
-            const response = await fetch("/Tasks/CreatePartial");
+            const response = await fetch("/Tasks/CreatePartial");//url que va en core.js
             console.log(response);
             const html = await response.text();
 
@@ -70,6 +70,8 @@
             modal.show();
         });
 
+
+
     // EDITAR
     document.addEventListener("click", async (e) => {
         if (e.target.matches(".btnEdit")) {
@@ -78,7 +80,7 @@
 
             modalContent.innerHTML = spinnerHtml();
 
-            const response = await fetch('/Tasks/EditPartial/'+id);
+            const response = await fetch('/Tasks/EditPartial/'+id);//url que va en core.js
             const html = await response.text();
 
             modalContent.innerHTML = html;
@@ -109,8 +111,8 @@
             const isEdit = data.Id && data.Id !== "0";
 
             const url = isEdit
-                ? '/Tasks/Edit/'+data.Id
-                : '/Tasks/Create';
+                ? '/Tasks/Edit/'+data.Id //url que va en core.js
+                : '/Tasks/Create'; //url que va en core.js
             console.log(JSON.stringify(data));
 
             const response = await fetch(url, {
@@ -143,7 +145,8 @@
             if (!confirmado) return;
 
             try {
-                const response = await fetch('/Tasks/DeleteAjax/' + id, {
+                const response = await fetch('/Tasks/DeleteAjax/' + id, //url que va en core.js
+                    {
                     method: "POST"
                 });
 
@@ -252,7 +255,7 @@ async function loadCategoriesInModal(modalContent) {
         // Antes: const response = await fetch("https://127.0.0.1:7074/api/Categories");
 
         // Ahora :Llama a CategoriesController.cs
-        const response = await fetch("/Categories/GetCategories");
+        const response = await fetch("/Categories/GetCategories");//url que va en core.js
         const categories = await response.json();
 
         if (!response.ok) {
@@ -310,6 +313,7 @@ async function loadCategoriesInModal(modalContent) {
     }
 }
 
+
 // ✅ Funciones auxiliares para mostrar mensajes
 function showSuccess(message) {
     const container = document.getElementById("alertContainer");
@@ -321,6 +325,17 @@ function showSuccess(message) {
            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
        </div>`;
 }
+//ns.core.$alert = $("#alertContainer");
+
+/*Ejemplo d emigracion a core.js
+function showSuccesstarea(message) {
+    if (!ns.core.$alert) return;
+    ns.core.$alert.innerHTML = `
+       <div class="alert alert-success alert-dismissible fade show" role="alert">
+           ${message}
+           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+       </div>`;
+}*/
 
 function showError(message) {
     const container = document.getElementById("alertContainer");
