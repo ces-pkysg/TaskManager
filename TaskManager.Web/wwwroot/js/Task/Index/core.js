@@ -34,3 +34,17 @@
 
     
 })(window, jQuery);
+
+///asignacion
+//// Terminar de construir loadcategoriesinmodal en service.js
+/////
+////
+/////
+////
+/////
+////
+/////
+////
+/////
+////
+/////
