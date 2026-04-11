@@ -1,6 +1,7 @@
 ﻿(function (window, $) {
 
     //namespace
+    window.Tasks = window.Tasks || {};
     const ns = window.Tasks.index = window.Tasks.index || {};
     ns.core = ns.core || {};
 
@@ -20,7 +21,7 @@
 
     //URLs (rutas del modulo)
     ns.core.urls = {
-        createPartial: '/Task/CreatePartial',
+        createPartial: '/Tasks/CreatePartial',
         editPartial: '/Tasks/EditPartial/',//el + id se concatena cuando se use,
         delete: '/Tasks/DeleteAjax/',// + id se concatena cuando se use,
         edit: '/Tasks/Edit/', // el + data.Id se concatena cuando se use,,
@@ -30,21 +31,38 @@
     };
 
 
+    //spinner 090426
+    ns.core.spinnerHtml = function () {
+        return `
+        <div class="modal-body text-center">
+            <div class="spinner-border text-primary"></div>
+            <p>Cargando...</p>
+        </div>`;
+    };
+
+
+    //msje éxito 090426
+    ns.core.showSuccess = function (message) {
+        ns.core.$alert.html(`
+       <div class="alert alert-success alert-dismissible fade show" role="alert">
+           ${message}
+           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+       </div>`);
+
+    };
+
+
+    //msje error 090426
+    ns.core.showError = function (message) {
+        ns.core.$alert.html(`
+       <div class="alert alert-danger alert-dismissible fade show" role="alert">
+           ${message}
+           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+       </div>`);
+    };
 
 
     
 })(window, jQuery);
 
-///asignacion
 //// Terminar de construir loadcategoriesinmodal en service.js
-/////
-////
-/////
-////
-/////
-////
-/////
-////
-/////
-////
-/////

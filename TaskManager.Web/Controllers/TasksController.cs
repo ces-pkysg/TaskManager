@@ -65,7 +65,7 @@ namespace TaskManager.Web.Controllers
                 return BadRequest(ModelState);
 
             await _client.CreateTaskAsync(model);
-
+            //throw new ApiException("Error al crear la tarea", 500);
             return Ok();
         }
 

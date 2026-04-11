@@ -1,9 +1,10 @@
 ﻿(function (window, $) {
 
+    window.Tasks = window.Tasks || {};
     const ns = window.Tasks.index = window.Tasks.index || {};
 
     $(function () {
-        ns.init();
+        ns.events.init();
 
 
     });

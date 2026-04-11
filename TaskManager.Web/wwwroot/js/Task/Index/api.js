@@ -1,5 +1,6 @@
 ﻿(function (window, $) {
 
+    window.Tasks = window.Tasks || {};
     const ns = window.Tasks.index = window.Tasks.index || {};
     ns.api = ns.api || {};
 
@@ -8,7 +9,7 @@
 
     ns.api = {
         //obtener formulario para crear
-        crearPartial: function () {
+        createPartial: function () {
             return $.ajax({
                 url: ns.core.urls.createPartial,
                 type: 'GET'
@@ -16,7 +17,7 @@
         },
 
         //obtener formulario para editar
-        editarPartial: function (id) {
+        editPartial: function (id) {
             return $.ajax({
                 url: ns.core.urls.editPartial + id,
                 type: 'GET'
@@ -24,7 +25,25 @@
         },
 
         //guardar tarea
-        guardarTarea: function (data) {
+
+        //saveTask: function (data) {
+        //    return $.ajax({
+        //        url: ns.core.urls.create,
+        //        type: 'POST',
+        //        data: JSON.stringify(data),
+        //        contentType: 'application/json'
+        //    }).then(async data => {
+        //        let result = data;
+               
+
+        //        return false;
+        //    }).catch(async error => {
+        //        let errorLocal = error;
+        //        return false;
+        //    });
+        //},
+
+        saveTask: function (data) {
             return $.ajax({
                 url: ns.core.urls.create,
                 type: 'POST',
@@ -34,7 +53,7 @@
         },
 
 
-        guardarEdicionTarea: function (data, id) {
+        saveEditTask: function (data, id) {
             return $.ajax({
                 url: ns.core.urls.edit + id,
                 type: 'POST',
@@ -44,7 +63,7 @@
         },
 
 
-        eliminarTarea: function (id) {
+        deleteTask: function (id) {
             return $.ajax({
                 url: ns.core.urls.delete + id,
                 type: 'POST',
@@ -53,7 +72,7 @@
         },
 
 
-        cargarTareas: function (query) {
+        loadTable: function (query) {
             return $.ajax({
                 url: ns.core.urls.loadTablePartial + query.toString(),
                 type: 'GET',
@@ -63,7 +82,7 @@
 
 
         //obtener categorias
-        obtenerCategorias: function () {
+        getCategories: function () {
             return $.ajax({
                 url: ns.core.urls.getCategories,
                 type: 'GET',

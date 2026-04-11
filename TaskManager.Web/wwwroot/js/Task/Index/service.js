@@ -1,5 +1,6 @@
 ﻿(function (window, $) {
 
+    window.Tasks = window.Tasks || {};
     const ns = window.Tasks.index = window.Tasks.index || {};
 
     //se crea el espacio para modulo service
@@ -19,16 +20,16 @@
     };
 
 
-    //cargar tareas filtradas
+    //cargar tabla filtrada
     ns.service.cargarTareasFiltradas = async function (page = 1) {
 
-        constform = ns.core.$formulario[0];
+        const form = ns.core.$formulario[0];
         const contenedor = ns.core.$contenedor;
 
         if (!form || !contenedor) return;
 
         const formData = new FormData(form);
-        const query = new URLSearchParanms();
+        let query = new URLSearchParams();
 
         formData.forEach((value, key) => {
             if (value !== null && value !== "") {
@@ -42,7 +43,7 @@
         contenedor.css("opacity", "0.5");
 
         try {
-            const result = await ns.api.loadTable(query.tostring());
+            const result = await ns.api.loadTable(query.toString());
 
             if (!result) {
                 contenedor.html("<p>Error al cargar el resultado.</p>");
@@ -60,10 +61,10 @@
 
 
 
-    //refreshTable
+    //refresh Table
     ns.service.refreshTable = async function () {
-        const activePageBtn = document.querySelector(".page-item.active .page-link-btn");
-        const curreentPage = activePageBtn ? activePageBtn.dataset.page : 1;
+        const PageBtn = document.querySelector(".page-item.active .page-link-btn");
+        const currentPage = PageBtn ? PageBtn.dataset.page : 1;
 
         await ns.service.cargarTareasFiltradas(currentPage);
     };
@@ -78,15 +79,31 @@
         try {
             const response = await ns.api.saveTask(data, isEdit);
 
-            if (!response) {
-                ns.core.showError("Error al guardar");
-                return;
-            }
 
-            ns.core.$modal.hide();
+            //ns.api.saveTask()
+            //    .then(function (response) {
+            //        console.log("OK:", response);
+
+            //        // si tu backend devuelve JSON:
+            //        if (response.success) {
+            //            console.log("Guardado correctamente");
+            //        }
+            //    })
+            //    .catch(function (error) {
+            //        console.error("Error:", error);
+            //    });
+
+
+
+            //if (!response) {
+            //    ns.core.showError("Error al guardar");
+            //    return;
+            //}
+
+            ns.core.$modalElement.modal("hide");
             ns.core.showSuccess("Tarea guardada exitosamente");
 
-            await nos.service.refereshTable();
+            await ns.service.refreshTable();
 
         } catch (err) {
             console.error(err);
@@ -97,7 +114,8 @@
 
 
     //eliminar tarea
-    ns.serevice.deleteTask = async function (id) {
+    ns.service.deleteTask = async function (id) {
+
         try {
             const result = await ns.api.deleteTask(id);
 
@@ -111,7 +129,7 @@
             await ns.service.refreshTable();
 
         } catch (err) {
-            console.error(err;
+            console.error(err);
             ns.core.showError("Error de conexión");
         }
     };
@@ -119,28 +137,51 @@
 
 
     //cargar categorias
-    ns.sercice.loadCategories = async function (select, selectedid) {
+    ns.service.loadCategories = async function (modalContent) {
 
+        //busca select dentro del modal
+        const select = modalContent.querySelector("#categorySelect");
+
+        //si no existe se sale para evitar errores
         if (!select) return;
 
+        //obtiene el id que viene para preseleccion  (cuando se edita)
+        const selectedId = select.getAttribute("data-selected-category-id");
+        
         try {
+            //llama al api (backend) para obtener categorias
             const categories = await ns.api.getCategories();
 
-            slect.innerHTML = "";
+            //limpia todas la opciones actuales del select 
+            select.innerHTML = "";
 
+
+            //agrega opcion por defecto 
+            const defaultOpt = document.createElement("option");
+            defaultOpt.value = "";
+            defaultOpt.textContent = "-- Seleccione una categoría --";
+            select.appendChild(defaultOpt);
+
+            //recoge las categorias y crea opciones 
             categories.forEach(cat => {
+                //crea opcion nueva
                 const opt = document.createElement("option");
+                //asigna un valor (id)
                 opt.value = cat.id;
+                //asigna texto visible
                 opt.textContent = cat.name;
 
-                if (selecteedid && String(selectedid) === String(cat.id)) {
+                //si es edicion, selecciona automaticamente la categoria correcta
+                if (selectedId && String(selectedId) === String(cat.id)) {
                     opt.selected = true;
                 }
 
+                //agrega la opcion al select
                 select.appendChild(opt);
             });
 
         } catch (err) {
+            //manejo d eerror en consola
             console.error(err);
         }
     };
