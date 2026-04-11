@@ -92,7 +92,7 @@
 
 
         //eliminar tarea
-        $(document).on("click", "btnDeleted", async function () {
+        $(document).on("click", ".btnDelete", async function () {
 
             const id = $(this).data("id");
 

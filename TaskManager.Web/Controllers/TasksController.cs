@@ -62,12 +62,24 @@ namespace TaskManager.Web.Controllers
         public async Task<IActionResult> Create([FromBody]CreateTaskViewModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+            {
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Datos Inválidos",
+                    errors = ModelState
+                });
+            }
 
             await _client.CreateTaskAsync(model);
             //throw new ApiException("Error al crear la tarea", 500);
-            return Ok();
+            return Ok(new
+            {
+                success = true,
+                message = "Tarea creada correctamente"
+            });
         }
+
 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
@@ -76,18 +88,24 @@ namespace TaskManager.Web.Controllers
             return View(model);
         }
 
-
-
         [HttpPost]
-        public async Task<IActionResult> Edit([FromBody]EditTaskViewModel model)
+        public async Task<IActionResult> Edit([FromBody] EditTaskViewModel model)
         {
             if (!ModelState.IsValid)
-                return BadRequest(ModelState);
+                return BadRequest(new
+                {
+                    success = false,
+                    message = "Datos invalidos"
+                });
 
             await _client.UpdateTaskAsync(model);
 
-            return Ok();
-          
+            return Ok(new
+            {
+                success = true,
+                message = "Tarea actualizada correctamente"
+            });
+
         }
 
 

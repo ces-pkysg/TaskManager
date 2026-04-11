@@ -48,7 +48,8 @@
                 url: ns.core.urls.create,
                 type: 'POST',
                 data: JSON.stringify(data),
-                contentType: 'application/json'
+                contentType: 'application/json',
+                dataType: 'json'//se agrega json porque el back devuelve un json
             });
         },
 
@@ -58,7 +59,8 @@
                 url: ns.core.urls.edit + id,
                 type: 'POST',
                 data: JSON.stringify(data),
-                contentType: 'application/json'
+                contentType: 'application/json',
+                dataType: 'json'//se agrega json porque el back devuelve un json
             });
         },
 
@@ -67,7 +69,7 @@
             return $.ajax({
                 url: ns.core.urls.delete + id,
                 type: 'POST',
-                
+                dataType: 'json'//se agrega json porque el back devuelve un json
             });
         },
 
