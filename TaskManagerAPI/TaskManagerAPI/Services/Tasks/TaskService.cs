@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using DocumentFormat.OpenXml.Office2021.DocumentTasks;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TaskManager.Context;
 using TaskManager.Models;
@@ -7,11 +8,18 @@ using TaskManagerAPI.DTOs.TaskItemDTOs;
 using TaskManagerAPI.Interfaces;
 using TaskManagerAPI.Interfaces.Tasks;
 using TaskManagerAPI.Utilities.Exceptions;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
+
+//Este archivo habla directamente con la base de datos usando Entity Framework.
 public class TaskService : ITaskService
 {
+    //AppDbContext es la conexión a SQL Server.
     private readonly AppDbContext _context;
 
+
+    //Esto es Dependency Injection.
+    //ASP.NET inyecta el DbContext automáticamente.
     public TaskService(AppDbContext context)
     {
         _context = context;
@@ -36,7 +44,7 @@ public class TaskService : ITaskService
             query = query.Where(t => t.Title.Contains(text));
 
         if (completed.HasValue)
-            query = query.Where(t => t.IsComplete == completed);
+            query = query.Where(t => t.IsCompleted == completed);
 
         if (step.HasValue)
             query = query.Where(t => t.Step == step);
@@ -60,7 +68,7 @@ public class TaskService : ITaskService
             {
                 Id = t.Id,
                 Title = t.Title,
-                IsCompleted = t.IsComplete,
+                IsCompleted = t.IsCompleted,
                 Step = t.Step,
                 CreatedAt = t.CreatedAt,
                 CategoryId = t.CategoryId ?? 0,
@@ -89,7 +97,7 @@ public class TaskService : ITaskService
             {
                 Id = t.Id,
                 Title = t.Title,
-                IsCompleted = t.IsComplete,
+                IsCompleted = t.IsCompleted,
                 Step = t.Step,
                 CreatedAt = t.CreatedAt,
                 CategoryId = t.CategoryId ?? 0,
@@ -115,7 +123,7 @@ public class TaskService : ITaskService
         {
             Identificador = t.Id,
             Titulo = t.Title,
-            Completado = t.IsComplete,
+            Completado = t.IsCompleted,
             PasoActual = t.Step,
             FechaCreacion = t.CreatedAt
         })
@@ -140,7 +148,7 @@ public class TaskService : ITaskService
             query = query.Where(t => t.Title.Contains(text));
 
         if (completed.HasValue)
-            query = query.Where(t => t.IsComplete == completed);
+            query = query.Where(t => t.IsCompleted == completed);
 
         if (step.HasValue)
             query = query.Where(t => t.Step == step);
@@ -168,7 +176,7 @@ public class TaskService : ITaskService
         {
             Identificador = t.Id,
             Titulo = t.Title,
-            Completado = t.IsComplete,
+            Completado = t.IsCompleted,
             PasoActual = t.Step,
             FechaCreacion = t.CreatedAt
         })
@@ -197,12 +205,17 @@ public class TaskService : ITaskService
         var task = await _context.Tasks.FindAsync(id);
         if (task == null) return false;
 
-        task.Title = request.Title.Trim();
-        task.Step = request.Step; 
-        task.CategoryId = request.CategoryId;
+        if (!string.IsNullOrWhiteSpace(request.Title))
+            task.Title = request.Title.Trim();
 
-        if (request.IsComplete.HasValue)
-            task.IsComplete = request.IsComplete.Value;
+        if (request.Step.HasValue)
+            task.Step = request.Step.Value;
+
+        if (request.CategoryId.HasValue)
+            task.CategoryId = request.CategoryId.Value;
+
+        if (request.IsCompleted.HasValue)
+            task.IsCompleted = request.IsCompleted.Value;
 
         await _context.SaveChangesAsync();
         return true;
@@ -210,37 +223,58 @@ public class TaskService : ITaskService
 
 
 
-    //post
+    //POST
     //Aquí no hay BadRequest, no hay CreatedAtAction, solo negocio y datos.
+    //1 valida datos
+    //2 crea la entidad
+    //3 guarda en base de datos
+    //4 devuelve respuesta
     public async Task<TaskItemResponse> CreateAsync(CreateTaskRequest request)
     {
+        //Si no hay body → error.
         if (request == null)
             throw new BusinessException("Body requerido.", 400);
 
+        //Si el título está vacío → error.
         if (string.IsNullOrWhiteSpace(request.Title))
             throw new BusinessException("Title es requerido.", 400);
 
+        //Verifica que la acategoria exista
         var categoryExists = await _context.Categories
             .AnyAsync(c => c.Id == request.CategoryId);
 
+        //Si no existe -> Mensaje error La categoria no existe
         if (!categoryExists)
             throw new BusinessException("La categoría no existe.", 404);
 
+        //Crear la entidad
+        //Aquí se crea el objeto que irá a la base de datos.
         var entity = new TaskItem
         {
             Title = request.Title.Trim(),
-            IsComplete = request.IsComplete,
-            CategoryId = request.CategoryId
+            IsCompleted = request.IsCompleted,
+            CategoryId = request.CategoryId,
+            Step = request.Step 
         };
 
+        //Insertar en Base de Datos (Entity Framework marca el objeto como Added.)
         _context.Tasks.Add(entity);
+        //Guarda en la base de datos (Aquí EF ejecuta SQL:)
         await _context.SaveChangesAsync();
 
+        //Construccion de respuesta
+        //Se devuelve un DTO, ¡¡¡ NO SE DEVUELVE LA ENTIDAD COMPLETA !!!
+        //Se mapea o se pasa los datos de la entidad al DTO de respuesta
         return new TaskItemResponse
         {
+            //En la respuesta pon el Id que SQL acaba de generar automaticamente
             Id = entity.Id,
+            //Pon el titulo que acabamos de generar
             Title = entity.Title,
-            IsComplete = entity.IsComplete
+            //pon si esta completada
+            IsCompleted = entity.IsCompleted,
+            //pon el step que guardamos
+            Step = entity.Step 
         };
     }
 
@@ -258,7 +292,9 @@ public class TaskService : ITaskService
         {
             Id = task.Id,
             Title = task.Title,
-            IsComplete = task.IsComplete
+            IsCompleted = task.IsCompleted,
+            Step = task.Step,
+            CategoryId = task.CategoryId
         };
     }
 
@@ -271,7 +307,7 @@ public class TaskService : ITaskService
             {
                 Id = t.Id,
                 Title = t.Title,
-                IsComplete = t.IsComplete
+                IsCompleted = t.IsCompleted
             })
             .ToListAsync();
     }

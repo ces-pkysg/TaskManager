@@ -62,7 +62,7 @@ namespace TaskManager.Web.Services
         public async Task CreateTaskAsync(CreateTaskViewModel model)
         {
             var response = await _httpClient.PostAsJsonAsync(
-                "/api/tasks",
+                "api/tasks", //"/api/tasks"
                 model
             );
 
@@ -90,6 +90,30 @@ namespace TaskManager.Web.Services
                 IsCompleted = response.IsCompleted
             };
         }
+
+        //duplicado editar tareas
+        //public async Task<EditTaskViewModel> GetTaskById2Async(int id)
+        //{
+          //  var response = await _httpClient.GetFromJsonAsync<TaskViewModel>($"/api/tasks/{id}");
+
+            //var model = new UpdateTaskViewModel
+            //{
+             //   Id = task.Id,
+               // Title = task.Title,
+                //CategoryId = task.CategoryId,
+                //Step = task.Step,
+                //IsCompleted = task.IsCompleted
+            //};
+
+            //return new EditTaskViewModel
+            //{
+              //  Id = response.Id,
+                //Title = response.Title,
+                //CategoryId = response.CategoryId,
+                //Step = response.Step,
+                //IsCompleted = response.IsCompleted
+            //};
+        //}
 
         public async Task UpdateTaskAsync(EditTaskViewModel model)
         {
@@ -160,6 +184,46 @@ namespace TaskManager.Web.Services
                    (result.Duplicadas > 0
                         ? $" ({result.Duplicadas} filas duplicadas no se importaron.)"
                         : string.Empty);
+        }
+
+
+        //retorna lista de registros 
+        public async Task<PagedResultViewModel<TaskViewModel>> AdvancedSearchAsync(TaskSearchViewModel filters)
+        {
+            var query = new Dictionary<string, string>();
+
+            if (!string.IsNullOrWhiteSpace(filters.Text))
+                query["text"] = filters.Text;
+
+            if (!string.IsNullOrWhiteSpace(filters.CategoryName))
+                query["categoryName"] = filters.CategoryName;
+
+            if (filters.CategoryId.HasValue)
+                query["categoryId"] = filters.CategoryId.Value.ToString();//.tostring se envian los valores en un string y viajan en un query
+
+            if (filters.Step.HasValue)
+                query["step"] = filters.Step.Value.ToString();
+
+            if (filters.IsCompleted.HasValue)
+                query["isCompleted"] = filters.IsCompleted.Value.ToString().ToLower();
+
+            query["page"] = filters.Page.ToString();
+            query["pageSize"] = filters.PageSize.ToString();//tamaño de la pagina
+
+            // Construir una URL con QueryString dinámico
+            var queryString = string.Join("&",
+                query.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+
+            var url = $"/api/tasks/advanced-search?{queryString}";
+
+            return await _httpClient.GetFromJsonAsync<PagedResultViewModel<TaskViewModel>>(url)
+                   ?? new PagedResultViewModel<TaskViewModel>// ?? <-- operador de coalescencia nula 
+                   {
+                       Items = new List<TaskViewModel>(),
+                       Page = filters.Page,
+                       PageSize = filters.PageSize,
+                       TotalCount = 0
+                   };
         }
 
     }

@@ -1,4 +1,5 @@
-﻿using TaskManager.Web.Services;
+﻿using TaskManager.Web.Http;
+using TaskManager.Web.Services;
 
 namespace TaskManager.Web.Extensions
 {
@@ -7,6 +8,17 @@ namespace TaskManager.Web.Extensions
     {
         public static IServiceCollection AddApiClients(this IServiceCollection services)
         {
+            //trackeo con handler
+            services.AddTransient<ApiExceptionHandler>();
+            //trackeo con handler
+            services.AddHttpClient<ITaskApiClient, TaskApiClient>()
+                    .AddHttpMessageHandler<ApiExceptionHandler>();
+            //trackeo con handler
+            services.AddHttpClient<ICategoryApiClient, CategoryApiClient>()
+                    .AddHttpMessageHandler<ApiExceptionHandler>();
+
+
+
             services.AddHttpClient<ITaskApiClient, TaskApiClient>();//1ra inyección 
             services.AddHttpClient<ICategoryApiClient, CategoryApiClient>();//2da inyección
 

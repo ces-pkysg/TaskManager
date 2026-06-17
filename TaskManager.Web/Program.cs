@@ -26,6 +26,10 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 
+
+app.UseMvcGlobalErrorHandler();
+
+
 app.UseAuthorization();
 
 app.MapStaticAssets();

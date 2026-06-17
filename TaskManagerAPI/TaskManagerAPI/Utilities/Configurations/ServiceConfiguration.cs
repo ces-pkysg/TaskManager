@@ -2,6 +2,7 @@
 using TaskManagerAPI.Interfaces.Tasks;
 using TaskManagerAPI.Services.Category;
 
+
 namespace TaskManager.Utilities.Configurations
 {
     public static class ServiceConfiguration

@@ -12,6 +12,7 @@ namespace TaskManager.Web.Services
         Task<bool> DeleteTaskAsync(int id);
         Task<string> ImportTaskFromExcelAsync(IFormFile file);
         Task<TaskViewModel> GetTaskDetailAsync(int id);
+        Task<PagedResultViewModel<TaskViewModel>> AdvancedSearchAsync(TaskSearchViewModel filters);
 
     }
 }

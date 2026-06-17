@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -17,6 +18,7 @@ namespace TaskManager.Web.Services
             var baseUrl = configuration["ApiSettings:BaseUrl"];
             _httpClient.BaseAddress = new Uri(baseUrl);
         }
+
 
         public async Task<string> ImportCategoriesFromExcelAsync(IFormFile file)//recibimos archivos como parametro
         {
@@ -58,5 +60,31 @@ namespace TaskManager.Web.Services
                         ? $" ({result.Duplicadas} filas duplicadas no se importaron.)"
                         : string.Empty);
         }
+
+        //Task<IActionResult> ICategoryApiClient.GetCategoriesAsync()
+        //{
+        //    throw new NotImplementedException();
+        //}
+
+        //Carga lista categorias
+        public async Task<IActionResult> GetCategoriesAsync()
+        {
+            // Hacemos la petición GET a la API externa
+            var response = await _httpClient.GetAsync("/api/categories");
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Leemos el contenido como una lista de objetos (puedes usar dynamic o una clase)
+                var categories = await response.Content.ReadFromJsonAsync<List<object>>();
+
+                // Devolvemos un OkObjectResult (que es un IActionResult) con la lista
+                return new OkObjectResult(categories);
+            }
+
+            // Si algo falla, devolvemos el error que venga de la API
+            return new StatusCodeResult((int)response.StatusCode);
+        }
+
+
     }
 }
